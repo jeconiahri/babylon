@@ -1,0 +1,94 @@
+var delayCreateScene = function () {
+    
+    var scene = new BABYLON.Scene(engine);
+
+    var camera = new BABYLON.ArcRotateCamera("Camera", - Math.PI / 2, Math.PI / 4, 10, BABYLON.Vector3.Zero(), scene);
+    // var camera = new BABYLON.FollowCamera("Camera", new BABYLON.Vector3(0, 0, 0), scene);
+    // camera.radius = 30;
+    // camera.lockedTarget = shark;
+    // camera.attachControl(canvas, true);
+
+    var frameRate = 10;
+
+    //Position Animation
+    var xSlide = new BABYLON.Animation("xSlide", "position.x", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+    
+    var keyFramesP = []; 
+
+    keyFramesP.push({
+        frame: 0,
+        value: 100
+    });
+
+    keyFramesP.push({
+        frame: frameRate,
+        value: -100
+    });
+
+    keyFramesP.push({
+        frame: 2 * frameRate,
+        value: 100
+    });
+
+
+    xSlide.setKeys(keyFramesP);
+
+    //Rotation Animation
+    var yRot = new BABYLON.Animation("yRot", "rotation.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+    var keyFramesR = []; 
+
+    keyFramesR.push({
+        frame: 0,
+        value: 0
+    });
+
+    keyFramesR.push({
+        frame: frameRate,
+        value: Math.PI
+    });
+
+    keyFramesR.push({
+        frame: 2 * frameRate,
+        value: 2 * Math.PI
+    });
+
+    yRot.setKeys(keyFramesR);
+
+    // Scaling
+    var ySca = new BABYLON.Animation("ySca", "scaling.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+    var keyFramesS = []; 
+
+    keyFramesS.push({
+        frame: 0,
+        value: 1
+    });
+
+    keyFramesS.push({
+        frame: frameRate,
+        value: 2
+    });
+
+    keyFramesS.push({
+        frame: 2 * frameRate,
+        value: 1
+    });
+
+    ySca.setKeys(keyFramesS);
+
+
+    BABYLON.SceneLoader.ImportMesh("", "scenes/", "skull.babylon", scene, function (meshes) {          
+        scene.createDefaultCameraOrLight(true, true, true);
+        scene.createDefaultEnvironment();
+
+        for (var i = 0; i < meshes.length; i++){
+            var skull = meshes[i];
+            scene.beginDirectAnimation(skull, [xSlide, yRot, ySca], 0, 2 * frameRate, true);
+        }
+        
+    });
+
+
+    return scene;
+};
